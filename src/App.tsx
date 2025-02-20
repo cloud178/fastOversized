@@ -198,7 +198,7 @@ function App() {
 
             {/* {result && <p className="result">{result}</p>} */}
             {result.length >= 1 && <div 
-            className={`result__wrapper ${result[0] === 'не сможем предложить' ? 'redBorder' : ''}`}
+            className={`fade-in result__wrapper ${result[0] === 'не сможем предложить' ? 'redBorder' : ''}`}
             >
                 <div className='result__header'>Результат</div>
                 <div className='result__sidebar--typeOfVehicle'>Тип техники</div>
