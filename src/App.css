@@ -10,7 +10,7 @@
     display: grid;
     border: 4px solid #c4c4c4;
     grid-template-columns: 300px 600px;
-    grid-template-rows: 30px 90px 90px 90px;
+    grid-template-rows: 30px 90px 90px minmax(90px, auto);
     /* place-items: center; */
     grid-template-areas:
         "rh rh"

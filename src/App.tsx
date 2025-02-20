@@ -47,7 +47,7 @@ function App() {
     });
 
     const [result, setResult] = useState<string[]>([]);
-    const [btnCalculateDisabled, setBtnCalculateDisabled] = useState(true)
+    const [btnCalculateDisabled, setBtnCalculateDisabled] = useState(false)
 
     const limits = {
         width: { min: 50, max: 6000 },
@@ -73,7 +73,7 @@ function App() {
                 numericValue <= limits[key].max
             ) {
                 setErrors((prev) => ({ ...prev, [key]: "" }));
-                setBtnCalculateDisabled(true)
+                setBtnCalculateDisabled(false)
             } else {
                 setErrors((prev) => ({
                     ...prev,
@@ -119,7 +119,7 @@ function App() {
             setResult(["введите все запрашиваемые параметры"]);
         } else {
             setResult(calculateResult(dimensions));
-            setBtnCalculateDisabled(false)
+            setBtnCalculateDisabled(true)
         }
     };
 
@@ -178,7 +178,7 @@ function App() {
                 </Button>
                 <Button
                     disabled={
-                        !btnCalculateDisabled ||
+                        btnCalculateDisabled ||
                         +dimensions.weight > limits.weight.max ||
                         +dimensions.height > limits.height.max ||
                         +dimensions.length > limits.length.max ||
