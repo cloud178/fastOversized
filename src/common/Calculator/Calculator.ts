@@ -1,5 +1,5 @@
 // common/Calculator/Calculator.ts
-import {DimensionsType, LocationType} from "../../App";
+import {DimensionsType} from "../../App";
 
 export const answers = {
     cargoVGabe: "Груз с вышеуказанными параметрами считается в габарите",
@@ -13,9 +13,9 @@ export const answers = {
 } as const;
 
 export const calculateResult = (
-    dimensions: DimensionsType,
-    location: LocationType
-): string => {
+    dimensions: DimensionsType
+    // location: LocationType
+): string[] => {
     const width = Math.min(+dimensions.width, +dimensions.length);
     const height = +dimensions.height;
     const length = Math.max(+dimensions.width, +dimensions.length);
@@ -30,7 +30,7 @@ export const calculateResult = (
 
 
     const unknownData = 'Ого, мы не проработали такую комбинацию данных. Напиши пожалуйста на почту Biryukov.Denis@aps-solver.com и приложи скрин с данными' as const
-    type VehicleType = 'Габарит' | 'Площадка' | 'Мега разборная' | 'Юмба' | typeof unknownData
+    // type VehicleType = 'Габарит' | 'Площадка' | 'Мега разборная' | 'Юмба' | typeof unknownData
 
     const getTypeOfVehicle = (): string => {
         if (weight / length <= 4 && weight < 24501 && height <= 2700 && length < 13601 && width < 2481) {
@@ -48,11 +48,14 @@ export const calculateResult = (
         if (weight / length <= 4 && weight < 24501 && height <= 3430 && length < 15601 && width < 4501) {
             return 'Мега разборная'
         }
-        if (weight / length > 4 || weight > 24500 || (height > 3599 && height < 4201) || length > 15600 || width > 4500) {
+        if ((weight / length > 4 || weight > 24500 || (height > 3599 && height < 4201) || length > 15600 || width > 4500) && height < 4201) {
             return 'Площадка'
         }
         if (weight < 28001 && height < 4651 && length < 7901 && width < 4001) {
             return 'Тифбет'
+        }
+        if ((weight / length > 4 || weight > 24500 || (height > 3599 && height < 4201) || length > 15600 || width > 4500) && height >= 4201) {
+            return 'не сможем предложить'
         }
         return unknownData
     }
@@ -88,6 +91,8 @@ export const calculateResult = (
                     return 'груз негабаритный'
                 }
                 return 'груз габаритный'
+            case 'не сможем предложить':
+                return 'не сможем предложить'    
             default:
                 return 'груз габаритный'
         }
@@ -124,10 +129,10 @@ export const calculateResult = (
                 return 'Требуется разборное авто, т.к. указаннные габариты превышают внутренние габариты наших тентов, а имеено: длина более 13600мм.'
             case 'Юмба':
                 if (height > 2940 && height < 3101 && width < 2481 && length < 9601) {
-                    return 'Груз в габарите, указанные параметры позволяют загрузить груз в Юмбу'
+                    return 'Груз в габарите, указанные параметры позволяют загрузить груз в Юмбу. Отличительная черта Юмб в сравнении с Мегами в погрузочной высоте, а именно 900мм против 1060мм, что позволяет грузить более высокие грузы.'
                 }
                 if (width > 2481 && height < 3601 && height > 3430 && length > 9600) {
-                    return 'Требуется разборное авто, т.к. указаннные габариты превышают внутренние габариты наших тентов, а имеено тут в совокупности: длина более 9600мм, ширина более 2480мм, высота более 3100мм. Также при прочих равных тут выбираем Юмбу т.к. у неё меньше погрузочная высота чем у Меги разборной, что нам позволяет грузить более высокие грузы'
+                    return 'Требуется разборное авто, т.к. указаннные габариты превышают внутренние габариты наших тентов, а имеено тут в совокупности: длина более 9600мм, ширина более 2480мм, высота более 3100мм. Отличительная черта Юмб в сравнении с Мегами в погрузочной высоте, а именно 900мм против 1060мм, что позволяет грузить более высокие грузы.'
                 }
                 return unknownData
             case 'Площадка': {
@@ -146,26 +151,29 @@ export const calculateResult = (
                 ].filter(Boolean).join(', ');
             }
             case 'Тифбет':
-                return 'рассматриваем тифбет вместо площадки ввиду большой высоты'
+                return 'рассматриваем тифбет вместо площадки ввиду большой высоты. Отличительная черта Тифбета в сравнении с Площадками в погрузочной высоте, а именно 350мм против 800-900мм, что позволяет грузить более высокие грузы.'
+            case 'не сможем предложить': 
+                return 'не сможем предложить'
             default:
                 return unknownData
         }
     }
     const justificationOfTypeOfVehicle = getJustificationOfTypeOfVehicle()
 
-    const getTypeOfConditionsNegabOrNo = (): string => {
-        if (width > 3500 && width < 4500) {
-            return 'В случае перевозки через КЗ, требуется один пилот. Через РФ - нужно два пилота'
-        } else if (width >= 4500) {
-            return 'В случае перевозки через КЗ, требуется один пилот. Через РФ - нужно три пилота'
-        }
-        return 'Пилотирование по ширине не требуется'
-    }
+    // const getTypeOfConditionsNegabOrNo = (): string => {
+    //     if (width > 3500 && width < 4500) {
+    //         return 'В случае перевозки через КЗ, требуется один пилот. Через РФ - нужно два пилота'
+    //     } else if (width >= 4500) {
+    //         return 'В случае перевозки через КЗ, требуется один пилот. Через РФ - нужно три пилота'
+    //     }
+    //     return 'Пилотирование по ширине не требуется'
+    // }
 
-    return `Тип техники: ${typeOfVehicle}. Тип перевозки (в габарите либо негабарит): ${NegabOrNo}. Обоснование типа техники: ${justificationOfTypeOfVehicle}`
+    return [typeOfVehicle, NegabOrNo, justificationOfTypeOfVehicle]
+    // return `Тип техники: ${typeOfVehicle}. Тип перевозки (в габарите либо негабарит): ${NegabOrNo}. Обоснование типа техники: ${justificationOfTypeOfVehicle}`
 
 
-    return unknownData
+    return [unknownData]
 
     // return 'Ого, мы не проработали такую комбинацию данных. Напиши пожалуйста на почту Biryukov.Denis@aps-solver.com и приложи скрин с данными';
     // const loadMP = weight / length;

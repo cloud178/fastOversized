@@ -7,6 +7,12 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid2 from "@mui/material/Grid2";
+import tent from './assets/photoOfVehiclesWEBP/tent.webp'
+import dlinomer from './assets/photoOfVehiclesWEBP/dlinomer.webp'
+import jumbo from './assets/photoOfVehiclesWEBP/jumbo.webp'
+import mega from './assets/photoOfVehiclesWEBP/mega.webp'
+import ploshchadka from './assets/photoOfVehiclesWEBP/ploschadka.webp'
+import tiefbett from './assets/photoOfVehiclesWEBP/tiefbett.webp'
 
 export type DimensionsType = {
     width: string;
@@ -28,10 +34,10 @@ function App() {
         weight: "",
     });
 
-    const [location, setLocation] = useState<LocationType>({
-        fromLoc: "Внутренний",
-        toLoc: "РФ",
-    });
+    // const [location, setLocation] = useState<LocationType>({
+    //     fromLoc: "Внутренний",
+    //     toLoc: "РФ",
+    // });
 
     const [errors, setErrors] = useState<DimensionsType>({
         width: "",
@@ -40,7 +46,8 @@ function App() {
         weight: "",
     });
 
-    const [result, setResult] = useState("");
+    const [result, setResult] = useState<string[]>([]);
+    const [btnCalculateDisabled, setBtnCalculateDisabled] = useState(true)
 
     const limits = {
         width: { min: 50, max: 6000 },
@@ -55,18 +62,18 @@ function App() {
             const newValue = e.currentTarget.value;
 
             setDimensions((prev) => ({ ...prev, [key]: newValue }));
-
             if (newValue === "") {
                 setErrors((prev) => ({ ...prev, [key]: "" }));
                 return;
             }
-
+            
             const numericValue = +newValue;
             if (
                 numericValue >= limits[key].min &&
                 numericValue <= limits[key].max
             ) {
                 setErrors((prev) => ({ ...prev, [key]: "" }));
+                setBtnCalculateDisabled(true)
             } else {
                 setErrors((prev) => ({
                     ...prev,
@@ -92,14 +99,15 @@ function App() {
             length: "",
             weight: "",
         });
-        setResult("");
-        setLocation({
-            fromLoc: "Внутренний",
-            toLoc: "РФ",
-        });
+        setResult([]);
+        // setLocation({
+        //     fromLoc: "Внутренний",
+        //     toLoc: "РФ",
+        // });
     };
 
     const calculateHandler = () => {
+        
         if (
             !(
                 dimensions.width &&
@@ -108,13 +116,14 @@ function App() {
                 dimensions.weight
             )
         ) {
-            setResult("введите все запрашиваемые параметры");
+            setResult(["введите все запрашиваемые параметры"]);
         } else {
-            setResult(calculateResult(dimensions, location));
+            setResult(calculateResult(dimensions));
+            setBtnCalculateDisabled(false)
         }
     };
 
-    const hasError = Object.values(errors).some((error) => !!error);
+    // const hasError = Object.values(errors).some((error) => !!error);
 
     return (
         <Container
@@ -127,7 +136,7 @@ function App() {
         >
             <h3>Fast Oversized Helper</h3>
             <Grid2
-                sx={{ display: "flex", flexDirection: "column", gap: "20px" }}
+                sx={{ display: "flex", flexDirection: "column", gap: "40px" }}
             >
                 {(["length", "width", "height", "weight"] as const).map(
                     (key) => (
@@ -136,6 +145,7 @@ function App() {
                                 {/* {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
                                 {key === "weight" ? "кг " : "мм "} */}
                                 <TextField
+                                
                                     type="number"
                                     error={!!errors[key]}
                                     // helperText={key}
@@ -144,7 +154,7 @@ function App() {
                                             ? `${key}, kg`
                                             : `${key}, mm`
                                     }
-                                    sx={{ maxWidth: "200px" }}
+                                    sx={{ width: "300px", position: 'relative' }}
                                     value={dimensions[key]}
                                     onChange={setDimensionHandler(key)}
                                 />
@@ -156,34 +166,8 @@ function App() {
                     )
                 )}
 
-                {/* Select + Input для выбора "откуда" */}
-                {/* <div>
-                    <label>
-                        Откуда:
-                        <select
-                            value={location.fromLoc}
-                            onChange={(e) => setLocation({ ...location, fromLoc: e.target.value as LocationType["fromLoc"] })}
-                        >
-                            <option value="Внутренний">Внутренний</option>
-                            <option value="Алаш">Алаш</option>
-                            <option value="ЗБК">ЗБК</option>
-                        </select>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Куда:
-                        <select
-                        value={location.toLoc}
-                        onChange={(e) => setLocation({ ...location, toLoc: e.target.value as LocationType["toLoc"] })}
-                        >
-                            <option value="КЗ">КЗ</option>
-                            <option value="РФ">РФ</option>
-                        </select>
-                    </label>
-                </div> */}
             </Grid2>
-            <Grid2 sx={{ display: "flex", gap: "20px" }}>
+            <Grid2 sx={{ display: "flex", gap: "20px", marginTop: '20px' }}>
                 <Button
                     sx={{ maxWidth: "120px" }}
                     variant="contained"
@@ -194,6 +178,7 @@ function App() {
                 </Button>
                 <Button
                     disabled={
+                        !btnCalculateDisabled ||
                         +dimensions.weight > limits.weight.max ||
                         +dimensions.height > limits.height.max ||
                         +dimensions.length > limits.length.max ||
@@ -211,11 +196,46 @@ function App() {
                 </Button>
             </Grid2>
 
-            {result && <p className="result">{result}</p>}
-            {result && (
-                <h4>
+            {/* {result && <p className="result">{result}</p>} */}
+            {result.length >= 1 && <div 
+            className={`result__wrapper ${result[0] === 'не сможем предложить' ? 'redBorder' : ''}`}
+            >
+                <div className='result__header'>Результат</div>
+                <div className='result__sidebar--typeOfVehicle'>Тип техники</div>
+                <div className='result__sidebar--NegabOrNo'>Тип перевозки (в габарите либо негабарит)</div>
+                <div className='result__sidebar--justificationOfTypeOfVehicle'>Обоснование типа техники:</div>
+                <div className='result__content--typeOfVehicle'>{result[0]}</div>
+                <div className='result__content--NegabOrNo'>{result[1]}</div>
+                <div className='result__content--justificationOfTypeOfVehicle'>{result[2]}</div>
+            </div>}
+            <div>
+                {result[0] === 'Тент' && (
+                <img src={tent} alt="tent" style={{ width: '800px', height: '100%' }} />
+                )}
+                {result[0] === 'Мега' && (
+                <img src={mega} alt="mega" style={{ width: '800px', height: '100%' }} />
+                )}
+                {result[0] === 'Мега разборная' && (
+                <img src={mega} alt="mega" style={{ width: '800px', height: '100%' }} />
+                )}
+                {result[0] === 'Длинномер' && (
+                <img src={dlinomer} alt="dlinomer" style={{ width: '800px', height: '100%' }} />
+                )}
+                {result[0] === 'Юмба' && (
+                <img src={jumbo} alt="jumbo" style={{ width: '800px', height: '100%' }} />
+                )}
+                {result[0] === 'Площадка' && (
+                <img src={ploshchadka} alt="ploshchadka" style={{ width: '800px', height: '100%' }} />
+                )}
+                {result[0] === 'Тифбет' && (
+                <img src={tiefbett} alt="tiefbett" style={{ width: '800px', height: '100%' }} />
+                )}
+            </div>
+
+            {result.length >= 1 && (
+                <h4 style={{marginTop: '0px'}}>
                     Приведенная выше информация{" "}
-                    <span style={{ color: "red", fontStyle: "italic" }}>
+                    <span style={{ color: "red", fontStyle: "italic"}}>
                         ориентировочная
                     </span>{" "}
                     и не учитывает абсолютно все нюансы. За более детальной
