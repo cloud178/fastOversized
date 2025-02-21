@@ -1,0 +1,76 @@
+.result__wrapper {
+    display: grid;
+    border: 4px solid #c4c4c4;
+    grid-template-columns: 300px 600px;
+    grid-template-rows: 30px 90px 90px minmax(90px, auto) minmax(90px, auto);
+    /* place-items: center; */
+    grid-template-areas:
+        "rh rh"
+        "rsv rcv"
+        "rsn rcn"
+        "rsj rcj"
+        "rsr rcr";
+    gap: 2px;
+    background-color: #c4c4c4;
+}
+
+.redBorder {
+    background-color: red;
+    border: 4px solid red;
+    color: red;
+}
+
+.result__header,
+.result__sidebar__typeOfVehicle,
+.result__sidebar__NegabOrNo,
+.result__sidebar__justificationOfTypeOfVehicle,
+.result__content__typeOfVehicle,
+.result__content__NegabOrNo,
+.result__content__justificationOfTypeOfVehicle,
+.result__sidebar__reasonwhyNegab,
+.result__content__reasonwhyNegab {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.result__header {
+    grid-area: rh;
+}
+
+.result__sidebar__typeOfVehicle {
+    grid-area: rsv;
+}
+
+.result__sidebar__NegabOrNo {
+    grid-area: rsn;
+}
+
+.result__sidebar__justificationOfTypeOfVehicle {
+    grid-area: rsj;
+}
+
+.result__content__typeOfVehicle {
+    grid-area: rcv;
+}
+
+.result__content__NegabOrNo {
+    grid-area: rcn;
+}
+
+.result__content__justificationOfTypeOfVehicle {
+    grid-area: rcj;
+}
+
+.result__sidebar__reasonwhyNegab {
+    grid-area: rsr;
+}
+
+.result__content__reasonwhyNegab {
+    grid-area: rcr;
+}

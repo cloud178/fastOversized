@@ -1,5 +1,4 @@
 import "./App.css";
-// import { Button } from "./common/components/Button/Button.tsx";
 import { ChangeEvent, useState } from "react";
 import { calculateResult } from "./common/Calculator/Calculator.ts";
 import TextField from "@mui/material/TextField";
@@ -7,12 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid2 from "@mui/material/Grid2";
-import tent from './assets/photoOfVehiclesWEBP/tent.webp'
-import dlinomer from './assets/photoOfVehiclesWEBP/dlinomer.webp'
-import jumbo from './assets/photoOfVehiclesWEBP/jumbo.webp'
-import mega from './assets/photoOfVehiclesWEBP/mega.webp'
-import ploshchadka from './assets/photoOfVehiclesWEBP/ploschadka.webp'
-import tiefbett from './assets/photoOfVehiclesWEBP/tiefbett.webp'
+import { Result } from "./components/Result/Result.tsx";
 
 export type DimensionsType = {
     width: string;
@@ -20,6 +14,8 @@ export type DimensionsType = {
     length: string;
     weight: string;
 };
+
+export type TypeOfMeasure = 'mm' | 'cm' | 'm'
 
 export type LocationType = {
     fromLoc: "Внутренний" | "Алаш" | "ЗБК";
@@ -195,55 +191,11 @@ function App() {
                     рассчитать
                 </Button>
             </Grid2>
-
-            {/* {result && <p className="result">{result}</p>} */}
-            {result.length >= 1 && <div 
-            className={`fade-in result__wrapper ${result[0] === 'не сможем предложить' ? 'redBorder' : ''}`}
-            >
-                <div className='result__header'>Результат</div>
-                <div className='result__sidebar--typeOfVehicle'>Тип техники</div>
-                <div className='result__sidebar--NegabOrNo'>Тип перевозки (в габарите либо негабарит)</div>
-                <div className='result__sidebar--justificationOfTypeOfVehicle'>Обоснование типа техники:</div>
-                <div className='result__content--typeOfVehicle'>{result[0]}</div>
-                <div className='result__content--NegabOrNo'>{result[1]}</div>
-                <div className='result__content--justificationOfTypeOfVehicle'>{result[2]}</div>
-            </div>}
-            <div>
-                {result[0] === 'Тент' && (
-                <img src={tent} alt="tent" style={{ width: '800px', height: '100%' }} />
-                )}
-                {result[0] === 'Мега' && (
-                <img src={mega} alt="mega" style={{ width: '800px', height: '100%' }} />
-                )}
-                {result[0] === 'Мега разборная' && (
-                <img src={mega} alt="mega" style={{ width: '800px', height: '100%' }} />
-                )}
-                {result[0] === 'Длинномер' && (
-                <img src={dlinomer} alt="dlinomer" style={{ width: '800px', height: '100%' }} />
-                )}
-                {result[0] === 'Юмба' && (
-                <img src={jumbo} alt="jumbo" style={{ width: '800px', height: '100%' }} />
-                )}
-                {result[0] === 'Площадка' && (
-                <img src={ploshchadka} alt="ploshchadka" style={{ width: '800px', height: '100%' }} />
-                )}
-                {result[0] === 'Тифбет' && (
-                <img src={tiefbett} alt="tiefbett" style={{ width: '800px', height: '100%' }} />
-                )}
-            </div>
-
-            {result.length >= 1 && (
-                <h4 style={{marginTop: '0px'}}>
-                    Приведенная выше информация{" "}
-                    <span style={{ color: "red", fontStyle: "italic"}}>
-                        ориентировочная
-                    </span>{" "}
-                    и не учитывает абсолютно все нюансы. За более детальной
-                    проработкой обращайтесь к Плану Негабарит:
-                    negab@aps-solver.com либо в 1С в рамках просчёта конкретного
-                    запроса 😎🚀
-                </h4>
-            )}
+            {result.length >= 1 && <Result 
+                result={result} 
+                vehicleType={result[0]} 
+                length={result.length}
+            />}
         </Container>
     );
 }

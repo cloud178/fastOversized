@@ -48,11 +48,14 @@ export const calculateResult = (
         if (weight / length <= 4 && weight < 22001 && height <= 3599 && height > 2940 && length < 11601 && width < 4501) {
             return 'Юмба'
         }
-        if ((weight / length > 4 || weight > 24500 || (height > 3599 && height < 4201) || length > 15600 || width > 4500) && height < 4201) {
+        if ((weight / length > 4 || weight > 24500 || (height > 3599 && height < 4201) || length > 15600 || width > 4500) || (height < 3701 && length > 7900 && width > 2550 && weight > 28000)) {
             return 'Площадка'
         }
         if (weight < 28001 && height < 4651 && length < 7901 && width < 4001) {
             return 'Тифбет'
+        }
+        if (weight > 28001 && height > 3700 && height < 4201) {
+            return 'Площадка'
         }
         if ((weight / length > 4 || weight > 24500 || (height > 3599 && height < 4201) || length > 15600 || width > 4500) && height >= 4201) {
             return 'не сможем предложить'
@@ -172,6 +175,73 @@ export const calculateResult = (
     }
     const justificationOfTypeOfVehicle = getJustificationOfTypeOfVehicle()
 
+    const getReasonWhyNegab = () => {
+        let result = ''
+        if (width > 2550) {
+            result += 'Ширина более 2550мм.'
+        }
+        switch (typeOfVehicle) {
+            case 'Мега разборная':
+                if (height > 2940) {
+                    result += ' Общая высота более 4000мм.'
+                }
+                if (length > 14600) {
+                    result += ' Свес более 1000мм.'
+                }
+                break
+            case 'Юмба': {
+                if (height > 3100) {
+                    result += ' Общая высота более 4000мм.'
+                }
+                if (length > 10600) {
+                    result += ' Свес более 1000мм.'
+                }
+                break
+            }
+            case 'Площадка': {
+                if (height > 3200) {
+                    result += ' Общая высота более 4000мм.'
+                }
+                if (length > 12500) {
+                    result += ' Общая длина более 12500мм.'
+                }
+                if (weight > 28400) {
+                    result += ' Общий вес более 48400кг.'
+                }
+                break
+            }
+            case 'Тифбет': {
+                console.log(typeOfVehicle);
+                
+                if (height > 3650) {
+                    result += ' Общая высота более 4000мм.'
+                }
+                if (weight > 16000) {
+                    result += ' Общий вес более 44000кг.'
+                }
+                break
+            }
+            default: 
+
+        }
+        return result || 'Груз в габарите'
+    }
+
+    const reasonwhyNegab = getReasonWhyNegab()
+
+    return [typeOfVehicle, NegabOrNo, justificationOfTypeOfVehicle, reasonwhyNegab]
+
+
+
+
+
+
+
+
+
+
+
+
     // const getTypeOfConditionsNegabOrNo = (): string => {
     //     if (width > 3500 && width < 4500) {
     //         return 'В случае перевозки через КЗ, требуется один пилот. Через РФ - нужно два пилота'
@@ -181,7 +251,6 @@ export const calculateResult = (
     //     return 'Пилотирование по ширине не требуется'
     // }
 
-    return [typeOfVehicle, NegabOrNo, justificationOfTypeOfVehicle]
     // return `Тип техники: ${typeOfVehicle}. Тип перевозки (в габарите либо негабарит): ${NegabOrNo}. Обоснование типа техники: ${justificationOfTypeOfVehicle}`
 
 

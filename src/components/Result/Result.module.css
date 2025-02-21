@@ -1,0 +1,16 @@
+.fadeIn {
+    opacity: 0;
+    transform: translateY(-30px);
+    animation: fadeIn 1s forwards;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
