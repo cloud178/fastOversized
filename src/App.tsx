@@ -1,12 +1,12 @@
 import "./App.css";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, KeyboardEvent } from "react";
 import { calculateResult } from "./common/Calculator/Calculator.ts";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid2 from "@mui/material/Grid2";
 import { Result } from "./components/Result/Result.tsx";
+import { ControlledButtons } from "./components/Button/ControlledButtons/ControlledButtons.tsx";
 
 export type DimensionsType = {
     width: string;
@@ -15,7 +15,7 @@ export type DimensionsType = {
     weight: string;
 };
 
-export type TypeOfMeasure = 'mm' | 'cm' | 'm'
+export type TypeOfMeasure = "mm" | "cm" | "m";
 
 export type LocationType = {
     fromLoc: "Внутренний" | "Алаш" | "ЗБК";
@@ -43,7 +43,7 @@ function App() {
     });
 
     const [result, setResult] = useState<string[]>([]);
-    const [btnCalculateDisabled, setBtnCalculateDisabled] = useState(false)
+    const [btnCalculateDisabled, setBtnCalculateDisabled] = useState(false);
 
     const limits = {
         width: { min: 50, max: 6000 },
@@ -51,6 +51,17 @@ function App() {
         length: { min: 50, max: 24999 },
         weight: { min: 50, max: 75000 },
     };
+
+    const btnDisabledCondition: boolean =
+        btnCalculateDisabled ||
+        +dimensions.weight > limits.weight.max ||
+        +dimensions.height > limits.height.max ||
+        +dimensions.length > limits.length.max ||
+        +dimensions.width > limits.width.max ||
+        +dimensions.weight < limits.weight.min ||
+        +dimensions.height < limits.height.min ||
+        +dimensions.length < limits.length.min ||
+        +dimensions.width < limits.width.min;
 
     const setDimensionHandler =
         (key: keyof typeof dimensions) =>
@@ -62,14 +73,14 @@ function App() {
                 setErrors((prev) => ({ ...prev, [key]: "" }));
                 return;
             }
-            
+
             const numericValue = +newValue;
             if (
                 numericValue >= limits[key].min &&
                 numericValue <= limits[key].max
             ) {
                 setErrors((prev) => ({ ...prev, [key]: "" }));
-                setBtnCalculateDisabled(false)
+                setBtnCalculateDisabled(false);
             } else {
                 setErrors((prev) => ({
                     ...prev,
@@ -103,7 +114,6 @@ function App() {
     };
 
     const calculateHandler = () => {
-        
         if (
             !(
                 dimensions.width &&
@@ -115,11 +125,17 @@ function App() {
             setResult(["введите все запрашиваемые параметры"]);
         } else {
             setResult(calculateResult(dimensions));
-            setBtnCalculateDisabled(true)
+            setBtnCalculateDisabled(true);
         }
     };
 
     // const hasError = Object.values(errors).some((error) => !!error);
+
+    // const btnEnterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+    //     if (e.key === 'Enter' && !btnDisabledCondition) {
+    //         calculateHandler()
+    //     }
+    // }
 
     return (
         <Container
@@ -129,6 +145,8 @@ function App() {
                 gap: "20px",
                 alignItems: "center",
             }}
+            onKeyDown={e => e.key === 'Enter' && !btnDisabledCondition && calculateHandler()}
+
         >
             <h3>Fast Oversized Helper</h3>
             <Grid2
@@ -141,7 +159,6 @@ function App() {
                                 {/* {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
                                 {key === "weight" ? "кг " : "мм "} */}
                                 <TextField
-                                
                                     type="number"
                                     error={!!errors[key]}
                                     // helperText={key}
@@ -150,7 +167,10 @@ function App() {
                                             ? `${key}, kg`
                                             : `${key}, mm`
                                     }
-                                    sx={{ width: "300px", position: 'relative' }}
+                                    sx={{
+                                        width: "300px",
+                                        position: "relative",
+                                    }}
                                     value={dimensions[key]}
                                     onChange={setDimensionHandler(key)}
                                 />
@@ -161,41 +181,17 @@ function App() {
                         </Box>
                     )
                 )}
-
             </Grid2>
-            <Grid2 sx={{ display: "flex", gap: "20px", marginTop: '20px' }}>
-                <Button
-                    sx={{ maxWidth: "120px" }}
-                    variant="contained"
-                    onClick={resetValuesHandler}
-                    disabled={!(dimensions.length || dimensions.width || dimensions.height || dimensions.weight)}
-                >
-                    сбросить значения
-                </Button>
-                <Button
-                    disabled={
-                        btnCalculateDisabled ||
-                        +dimensions.weight > limits.weight.max ||
-                        +dimensions.height > limits.height.max ||
-                        +dimensions.length > limits.length.max ||
-                        +dimensions.width > limits.width.max ||
-                        +dimensions.weight < limits.weight.min ||
-                        +dimensions.height < limits.height.min ||
-                        +dimensions.length < limits.length.min ||
-                        +dimensions.width < limits.width.min
-                    }
-                    sx={{ maxWidth: "120px" }}
-                    variant="contained"
-                    onClick={calculateHandler}
-                >
-                    рассчитать
-                </Button>
+            <Grid2 sx={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+                <ControlledButtons dimensions={dimensions} resetValuesHandler={resetValuesHandler} btnDisabledCondition={btnDisabledCondition} calculateHandler={calculateHandler}/>
             </Grid2>
-            {result.length >= 1 && <Result 
-                result={result} 
-                vehicleType={result[0]} 
-                length={result.length}
-            />}
+            {result.length >= 1 && (
+                <Result
+                    result={result}
+                    vehicleType={result[0]}
+                    length={result.length}
+                />
+            )}
         </Container>
     );
 }
