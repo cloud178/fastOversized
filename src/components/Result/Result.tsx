@@ -13,7 +13,7 @@ export const Result = ({result, vehicleType, length}: ResultType) => {
     return (
         <div className={s.fadeIn}>
             <ResultTable result={result} />
-            <ResultImg vehicleType={vehicleType}/>
+            <ResultImg vehicleType={vehicleType} pilots={result[4]}/>
             <Notification length={length}/>
         </div>
     )

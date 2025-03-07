@@ -1,26 +1,3 @@
-import "./App.css";
-import { ChangeEvent, useState, useEffect } from "react";
-import { calculateResult } from "./common/Calculator/Calculator.ts";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Grid2 from "@mui/material/Grid2";
-import { Result } from "./components/Result/Result.tsx";
-import { ControlledButtons } from "./components/Button/ControlledButtons/ControlledButtons.tsx";
-
-export type DimensionsType = {
-    width: string;
-    height: string;
-    length: string;
-    weight: string;
-};
-
-export type TypeOfMeasure = "mm" | "cm" | "m";
-
-export type LocationType = {
-    fromLoc: "Внутренний" | "Алаш" | "ЗБК";
-    toLoc: "КЗ" | "РФ";
-};
 
 function App() {
     useEffect( () => {
@@ -76,7 +53,7 @@ function App() {
         +dimensions.width < limits.width.min;
 
         useEffect(() => {
-            const handleKeyDown = (e: any) => {
+            const handleKeyDown = (e) => {
                 if (e.key === 'Enter' && !btnDisabledCondition) {
                     calculateHandler();
                 }
@@ -87,7 +64,7 @@ function App() {
             return () => {
                 window.removeEventListener("keydown", handleKeyDown);
             };
-        });
+        }, [btnDisabledCondition]); // Добавляем зависимости
 
     const setDimensionHandler =
         (key: keyof typeof dimensions) =>

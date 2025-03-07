@@ -4,14 +4,17 @@ import jumbo from './../../../assets/photoOfVehiclesWEBP/jumbo.webp'
 import mega from './../../../assets/photoOfVehiclesWEBP/mega.webp'
 import ploshchadka from './../../../assets/photoOfVehiclesWEBP/ploschadka.webp'
 import tiefbett from './../../../assets/photoOfVehiclesWEBP/tiefbett.webp'
+import pilotFront from "./../../../assets/photoOfPilotsWEBP/pilotfront.webp"
+import pilotBack from "./../../../assets/photoOfPilotsWEBP/pilotback.webp"
 
 type ResultImgType = {
-    vehicleType: string;
+    vehicleType: string
+    pilots: string
 };
 
-export const ResultImg = ({ vehicleType }: ResultImgType) => {
+export const ResultImg = ({ vehicleType, pilots }: ResultImgType) => {
     return (
-        <div>
+        <div style={{marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             {vehicleType === "Тент" && (
                 <img
                     src={tent}
@@ -61,6 +64,22 @@ export const ResultImg = ({ vehicleType }: ResultImgType) => {
                     style={{ width: "800px", height: "100%" }}
                 />
             )}
+            {
+                ['РФ', 'КЗ', 'РБ'].some(country => pilots.includes(country)) && (
+                    <div>
+                        <img
+                            src={pilotFront}
+                            alt="pilot front"
+                            style={{ width: "300px", height: "100%" }}
+                        />
+                        <img
+                            src={pilotBack}
+                            alt="pilot back"
+                            style={{ width: "300px", height: "100%" }}
+                        />
+                    </div>
+                )
+            }
         </div>
     );
 };
